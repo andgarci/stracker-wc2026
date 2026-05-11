@@ -75,10 +75,20 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[]) {
         }
 
         if (argc < 4) {
+            int count = 0;
             for (int i = 0; i < MAX_STICKERS ; i++) {
                 if (stickers[i].status == status) {
                     sticker_print(&stickers[i]);
+                    count++;
                 }
+            }
+            if (status == 0) {
+                count = MAX_STICKERS - count;
+            }
+            if (status !=2) {
+                printf("You have %d / %d total stickers\n", count, MAX_STICKERS);
+                printf("Your album is %d%% complete\n\n", (count / MAX_STICKERS) * 100);
+
             }
         } 
         else {

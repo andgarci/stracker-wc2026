@@ -11,7 +11,7 @@ void sticker_print(Sticker *sticker, char message[]) {
                 sticker->code, sticker->name, sticker->team_code, status_names[sticker->status], sticker->quantity);
 }
 
-Sticker *sticker_find(Sticker stickers[], int size, char code[]) {
+Sticker *sticker_find(Sticker stickers[], int size, char code[], char message[]) {
     for (int i = 0; i < MAX_STICKERS ; i++) {
         //printf("sticker code: %s\n code: %s\n", stickers[i].code, code);
         if (strcmp(stickers[i].code, code) == 0) {
@@ -19,6 +19,7 @@ Sticker *sticker_find(Sticker stickers[], int size, char code[]) {
         }
     }
     printf("error: sticker with code %s does not exist\n", code);
+    sprintf(message, "error: sticker with code %s does not exist\n", code);
     return NULL;
 }
 
@@ -37,7 +38,7 @@ void update_sticker_status(Sticker *sticker) {
 
 
 void sticker_add(Sticker stickers[], int *count, char code[], char message[]) {
-    Sticker *sticker = sticker_find(stickers, *count, code);
+    Sticker *sticker = sticker_find(stickers, *count, code, message);
     if (sticker != NULL) {
         sticker->quantity++;
         update_sticker_status(sticker);
@@ -48,7 +49,7 @@ void sticker_add(Sticker stickers[], int *count, char code[], char message[]) {
 }
 
 void sticker_remove(Sticker stickers[], int *count, char code[], char message[]) {
-    Sticker *sticker = sticker_find(stickers, *count, code);
+    Sticker *sticker = sticker_find(stickers, *count, code, message);
     if (sticker != NULL) {
         if (sticker->quantity > 0) {
             sticker->quantity--;
@@ -107,39 +108,48 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char m
 
 }
 
-void album_page(Sticker stickers[], char team_code[]) {
-    printf("\n=== %s ===\n\n", team_code);
+void album_page(Sticker stickers[], char team_code[], char message[]) {
 
-    int printed = 0;
+    printf("\n===================== %s =====================\n\n", team_code);
 
-    for (int i = 0; i < MAX_STICKERS; i++) {
+    int layout[3][9] = {
+        {-1, -1,  1,  2, 11, 12, 13, -1, -1},
+        { 3,  4,  5,  6, 14, 15, 16, 17, -1},
+        { 7,  8,  9, 10, -1, 18, 19, 20, -1}
+    };
 
-        if (strcmp(stickers[i].team_code, team_code) == 0) {
+    for (int row = 0; row < 3; row++) {
 
-            // extract number part from sticker code
-            // e.g. "MEX12" -> 12
-            int number = 0;
+        for (int col = 0; col < 9; col++) {
 
-            sscanf(stickers[i].code + 3, "%d", &number);
+            int number = layout[row][col];
 
-            if (stickers[i].quantity > 0) {
-                printf("[✓%02d] ", number);
+            // empty slot
+            if (number == -1) {
+                printf("      ");
+                continue;
+            }
+
+            char full_code[16];
+
+            sprintf(full_code, "%s%02d", team_code, number);
+
+            Sticker *sticker = sticker_find(stickers, MAX_STICKERS, full_code, message);
+
+            if (sticker != NULL && sticker->quantity > 0) {
+                printf("\033[32m[✓%02d]\033[0m ", number);
             }
             else {
                 printf("[ %02d] ", number);
             }
-
-            printed++;
-
-            // 4 stickers per row
-            if (printed % 4 == 0) {
-                printf("\n");
-            }
         }
+
+        printf("\n");
     }
 
     printf("\n");
 }
+
 
 Sticker CATALOG[MAX_STICKERS] = {
     { MISSING, 0, "PNI01", "PNI", "Panini Logo" },

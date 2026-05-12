@@ -13,7 +13,7 @@ void album_interactive(Sticker stickers[], int count, char team_code[], char mes
         // clear screen
         system("clear");
 
-        album_page(stickers, team_code);
+        album_page(stickers, team_code, message);
 
         printf("\n%s\n", message);
         strcpy(message, "");

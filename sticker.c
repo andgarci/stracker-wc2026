@@ -4,8 +4,10 @@
 
 const char *status_names[] = {"MISSING", "HAVE", "DUPLICATE"};
 
-void sticker_print(Sticker *sticker) {
+void sticker_print(Sticker *sticker, char message[]) {
         printf("Sticker %s: \n\t Name: %s\n\t Team: %s\n\t Status: %s\n\t Quantity: %d\n\n", 
+                sticker->code, sticker->name, sticker->team_code, status_names[sticker->status], sticker->quantity);
+        sprintf(message + strlen(message), "Sticker %s: \n\t Name: %s\n\t Team: %s\n\t Status: %s\n\t Quantity: %d\n\n", 
                 sticker->code, sticker->name, sticker->team_code, status_names[sticker->status], sticker->quantity);
 }
 
@@ -34,29 +36,31 @@ void update_sticker_status(Sticker *sticker) {
 }
 
 
-void sticker_add(Sticker stickers[], int *count, char code[]) {
+void sticker_add(Sticker stickers[], int *count, char code[], char message[]) {
     Sticker *sticker = sticker_find(stickers, *count, code);
     if (sticker != NULL) {
         sticker->quantity++;
         update_sticker_status(sticker);
         printf("Successfully added sticker!\n\n");
-        sticker_print(sticker);
+        sprintf(message, "Successfully added sticker!\n\n");
+        sticker_print(sticker, message);
     }
 }
 
-void sticker_remove(Sticker stickers[], int *count, char code[]) {
+void sticker_remove(Sticker stickers[], int *count, char code[], char message[]) {
     Sticker *sticker = sticker_find(stickers, *count, code);
     if (sticker != NULL) {
         if (sticker->quantity > 0) {
             sticker->quantity--;
             update_sticker_status(sticker);
             printf("Successfully removed sticker!\n\n");
-            sticker_print(sticker);
+            sprintf(message, "Successfully removed sticker!\n\n");
+            sticker_print(sticker, message);
         }
     }
 }
 
-void sticker_list(Sticker stickers[], int *count, int argc, char *argv[]) {
+void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char message[]) {
     if (argc < 3) {
         return;
     }
@@ -78,7 +82,7 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[]) {
             int count = 0;
             for (int i = 0; i < MAX_STICKERS ; i++) {
                 if (stickers[i].status == status) {
-                    sticker_print(&stickers[i]);
+                    sticker_print(&stickers[i], message);
                     count++;
                 }
             }
@@ -94,13 +98,47 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[]) {
         else {
             for (int i = 0; i < MAX_STICKERS ; i++) {
                 if (stickers[i].status == status && strcmp(stickers[i].team_code, argv[3]) == 0) {
-                    sticker_print(&stickers[i]);
+                    sticker_print(&stickers[i], message);
                 }
             }
         }
 
     }
 
+}
+
+void album_page(Sticker stickers[], char team_code[]) {
+    printf("\n=== %s ===\n\n", team_code);
+
+    int printed = 0;
+
+    for (int i = 0; i < MAX_STICKERS; i++) {
+
+        if (strcmp(stickers[i].team_code, team_code) == 0) {
+
+            // extract number part from sticker code
+            // e.g. "MEX12" -> 12
+            int number = 0;
+
+            sscanf(stickers[i].code + 3, "%d", &number);
+
+            if (stickers[i].quantity > 0) {
+                printf("[✓%02d] ", number);
+            }
+            else {
+                printf("[ %02d] ", number);
+            }
+
+            printed++;
+
+            // 4 stickers per row
+            if (printed % 4 == 0) {
+                printf("\n");
+            }
+        }
+    }
+
+    printf("\n");
 }
 
 Sticker CATALOG[MAX_STICKERS] = {

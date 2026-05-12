@@ -11,7 +11,8 @@ void album_interactive(Sticker stickers[], int count, char team_code[], char mes
     while (1) {
 
         // clear screen
-        system("clear");
+        // system("clear");
+        printf("\033[2J\033[H");
 
         album_page(stickers, team_code, message);
 

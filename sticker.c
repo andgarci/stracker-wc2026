@@ -774,7 +774,7 @@ Sticker CATALOG[MAX_STICKERS] = {
     { MISSING, 0, "KSA09", "KSA", "Musab Aljuwayr" },
     { MISSING, 0, "KSA10", "KSA", "Ziyad Aljohani" },
     { MISSING, 0, "KSA11", "KSA", "Abdullah Alkhaibari" },
-    { MISSING, 0, "KAS12", "KAS", "Nasser Aldawsari" },
+    { MISSING, 0, "KSA12", "KSA", "Nasser Aldawsari" },
     { MISSING, 0, "KSA13", "KSA", "Team Photo" },
     { MISSING, 0, "KSA14", "KSA", "Saleh Abu Alshamat" },
     { MISSING, 0, "KSA15", "KSA", "Marwan Alsahafi" },

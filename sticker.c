@@ -70,26 +70,33 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char m
         int status;
         //TODO: make so that is 'm', 'h', or 'd' or partial type of the command e.g. 'dup' also works
         if (strcmp(argv[2], "missing") == 0) {
-            status = 0;
+            status = MISSING;
         }
         else if (strcmp(argv[2], "have") == 0) {
-            status = 1;
+            status = HAVE;
         }
         else if (strcmp(argv[2], "duplicate") == 0) {
-            status = 2;
+            status = DUPLICATE;
         }
 
         if (argc < 4) {
             int count = 0;
+            int count_d = 0;
             for (int i = 0; i < MAX_STICKERS ; i++) {
                 if (stickers[i].status == status) {
                     sticker_print(&stickers[i], message);
                     strcpy(message, "");
                     count++;
                 }
+                else if(stickers[i].status == DUPLICATE){
+                    count_d++;
+                }
             }
             if (status == 0) {
                 count = MAX_STICKERS - count;
+            }
+            else {
+                count = count + count_d;
             }
             if (status !=2) {
                 printf("You have %d / %d total stickers\n", count, MAX_STICKERS);

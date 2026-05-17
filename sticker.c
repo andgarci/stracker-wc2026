@@ -113,18 +113,36 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char m
 void album_page(Sticker stickers[], char team_code[], char message[]) {
 
     printf("\n===================== %s =====================\n\n", team_code);
+    int fwc_layout[4][12] = {
+        { 1, -1, -1,  7, -1, -1, -1, -1, -1, -1, -1, -1},
+        { 2, -1,  5, -1, -1, -1, 11, -1, -1, -1, 16, 17},
+        { 3, -1, -1,  8, -1,  9, 12, -1, -1, 14, -1, 18},
+        { 4, -1,  6, -1, -1, 10, -1, 13, -1, 15, -1, 19}
+    };
 
-    int layout[3][9] = {
+    int other_layout[3][9] = {
         {-1, -1,  1,  2, 11, 12, 13, -1, -1},
         { 3,  4,  5,  6, 14, 15, 16, 17, -1},
         { 7,  8,  9, 10, -1, 18, 19, 20, -1}
     };
 
-    for (int row = 0; row < 3; row++) {
+    int *layout;
+    int rows, cols;
+    if (strcmp(team_code, "FWC") == 0) {
+        layout = &fwc_layout[0][0];
+        rows = 4; cols = 12;
+    }
+    else {
+        layout = &other_layout[0][0];
+        rows = 3; cols = 9;
+    }
 
-        for (int col = 0; col < 9; col++) {
 
-            int number = layout[row][col];
+    for (int row = 0; row < rows; row++) {
+
+        for (int col = 0; col < cols; col++) {
+
+            int number = layout[row * cols + col];
 
             // empty slot
             if (number == -1) {

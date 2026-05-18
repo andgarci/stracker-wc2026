@@ -35,7 +35,9 @@ make
 ## Usage
 ### List stickers
 ```bash
-./stracker list [missing/have/duplicates]
+./stracker list [missing/have/duplicates] (optional)[country e.g. "mex" "arg" ...] (optional)[--oneline]
+./stracker list d mex arg --oneline
+./stracker list d
 ```
 ### Album view (interactive)
 ```bash

@@ -86,40 +86,57 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char m
             printf("error: Unknown status %s, please try missing/m, have/h or duplicate/d\n", argv[2]);
         }
 
-        if (argc < 4) {
-            int count = 0;
-            int count_d = 0;
-            for (int i = 0; i < MAX_STICKERS ; i++) {
-                if (stickers[i].status == status) {
-                    sticker_print(&stickers[i], message);
-                    strcpy(message, "");
-                    count++;
-                }
-                else if(stickers[i].status == DUPLICATE){
-                    count_d++;
-                }
-            }
-            if (status == 0) {
-                count = MAX_STICKERS - count;
-            }
-            else {
-                count = count + count_d;
-            }
-            if (status !=2) {
-                printf("You have %d / %d total stickers\n", count, MAX_STICKERS);
-                printf("Your album is %.1f%% complete\n\n", ((float)count / MAX_STICKERS) * 100.0f);
+        int oneline = 0;
+        char teams[48][4];
+        int team_count = 0;
 
-            }
-        } 
-        else {
-            for (int i = 0; i < MAX_STICKERS ; i++) {
-                if (stickers[i].status == status && strcmp(stickers[i].team_code, argv[3]) == 0) {
-                    sticker_print(&stickers[i], message);
-                    strcpy(message, "");
+        for (int i = 3; i < argc; i++) {
+            if (strcmp(argv[i], "--oneline") == 0) {
+                oneline = 1;
+            } 
+            else {
+                int j = 0;
+                while (argv[i][j] && j < 4) {
+                    teams[team_count][j] = toupper((unsigned char)argv[i][j]);
+                    j++;
                 }
+                teams[team_count][j] = '\0';
+                team_count++;
+            }
+        }    
+
+        int found = 0;
+        int found_d = 0;
+
+        for (int i = 0; i < MAX_STICKERS; i++) {
+            if (team_count > 0) {
+                int match = 0;
+                for (int t = 0; t < team_count; t++) {
+                    if (strcmp(stickers[i].team_code, teams[t]) == 0) {
+                        match = 1;
+                        break;
+                    }
+                }
+                if (!match) continue;
+            }
+
+            if (stickers[i].status == status) {
+                sticker_print(&stickers[i], message, oneline);
+                strcpy(message, "");
+                found++;
+            } else if (stickers[i].status == DUPLICATE) {
+                found_d++;
             }
         }
 
+        if (status != DUPLICATE) {
+            int total_have = (status == MISSING)
+                ? MAX_STICKERS - found         // missing shown = not owned
+                : found + found_d;             // have + duplicates
+            int scope = (team_count > 0) ? found : MAX_STICKERS;
+            printf("You have %d / %d stickers\n", total_have, scope);
+            printf("Album %.1f%% complete\n\n", ((float)total_have / MAX_STICKERS) * 100.0f);
+        }
     }
 
 }

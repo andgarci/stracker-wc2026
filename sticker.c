@@ -4,11 +4,17 @@
 #include "sticker.h"
 
 const char *status_names[] = {"MISSING", "HAVE", "DUPLICATE"};
+static char current_team[4] = "NAN";
 
 void sticker_print(Sticker *sticker, char message[], int oneline) {
     if (oneline) {
-        printf("%s\n", sticker->code);
-        sprintf(message + strlen(message), "%s\n", sticker->code);
+        if (strcmp(current_team, sticker->team_code) != 0) {
+            printf("\n%s: ", sticker->team_code);
+            sprintf(current_team, "%s", sticker->team_code);
+            strncpy(current_team, sticker->team_code, 3);
+        }
+        printf("%s, ", sticker->code + 3);
+        sprintf(message + strlen(message), "%s, ", sticker->code + 3);
     }
     else {
         printf("Sticker %s: \n\t Name: %s\n\t Team: %s\n\t Status: %s\n\t Quantity: %d\n\n", 
@@ -18,7 +24,7 @@ void sticker_print(Sticker *sticker, char message[], int oneline) {
     }
 }
 
-Sticker *sticker_find(Sticker stickers[], int size, char code[], char message[]) {
+Sticker *sticker_find(Sticker stickers[], char code[], char message[]) {
     for (int i = 0; i < MAX_STICKERS ; i++) {
         //printf("sticker code: %s\n code: %s\n", stickers[i].code, code);
         if (strcmp(stickers[i].code, code) == 0) {
@@ -45,7 +51,7 @@ void update_sticker_status(Sticker *sticker) {
 
 
 void sticker_add(Sticker stickers[], int *count, char code[], char message[]) {
-    Sticker *sticker = sticker_find(stickers, *count, code, message);
+    Sticker *sticker = sticker_find(stickers, code, message);
     if (sticker != NULL) {
         sticker->quantity++;
         update_sticker_status(sticker);
@@ -56,7 +62,7 @@ void sticker_add(Sticker stickers[], int *count, char code[], char message[]) {
 }
 
 void sticker_remove(Sticker stickers[], int *count, char code[], char message[]) {
-    Sticker *sticker = sticker_find(stickers, *count, code, message);
+    Sticker *sticker = sticker_find(stickers, code, message);
     if (sticker != NULL) {
         if (sticker->quantity > 0) {
             sticker->quantity--;
@@ -68,7 +74,8 @@ void sticker_remove(Sticker stickers[], int *count, char code[], char message[])
     }
 }
 
-void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char message[]) {
+void sticker_list(Sticker stickers[], int argc, char *argv[], char message[]) {
+    strcpy(current_team, "NAN");
     if (argc < 3) return;
 
     else {
@@ -134,8 +141,11 @@ void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char m
                 ? MAX_STICKERS - found         // missing shown = not owned
                 : found + found_d;             // have + duplicates
             int scope = (team_count > 0) ? found : MAX_STICKERS;
-            printf("You have %d / %d stickers\n", total_have, scope);
+            printf("\n\nYou have %d / %d stickers\n", total_have, scope);
             printf("Album %.1f%% complete\n\n", ((float)total_have / MAX_STICKERS) * 100.0f);
+        }
+        else {
+            printf("\n\nYou have %d duplicate stickers\n", found);
         }
     }
 
@@ -185,7 +195,7 @@ void album_page(Sticker stickers[], char team_code[], char message[]) {
 
             sprintf(full_code, "%s%02d", team_code, number);
 
-            Sticker *sticker = sticker_find(stickers, MAX_STICKERS, full_code, message);
+            Sticker *sticker = sticker_find(stickers, full_code, message);
 
             if (sticker != NULL && sticker->quantity > 0) {
                 printf("\033[32m[✓%02d]\033[0m ", number);

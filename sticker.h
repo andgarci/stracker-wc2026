@@ -9,7 +9,7 @@ typedef enum {
 	DUPLICATE = 2
 } Status;
 
-const char *status_names[];
+extern const char *status_names[];
 
 typedef struct {
 	Status status;
@@ -19,10 +19,10 @@ typedef struct {
 	char name[64];
 } Sticker;
 
-Sticker *sticker_find(Sticker stickers[], int count, char code[], char message[]);
+Sticker *sticker_find(Sticker stickers[], char code[], char message[]);
 void sticker_add(Sticker stickers[], int *count, char code[], char message[]);
 void sticker_remove(Sticker stickers[], int *count, char code[], char message[]);
-void sticker_list(Sticker stickers[], int *count, int argc, char *argv[], char message[]);
+void sticker_list(Sticker stickers[], int argc, char *argv[], char message[]);
 void album_page(Sticker stickers[], char team_code[], char message[]);
 
 extern Sticker CATALOG[MAX_STICKERS];

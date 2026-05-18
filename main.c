@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     }
     else {
         if (strcmp(argv[1], "list") == 0) {
-            sticker_list(stickers, &count, argc, argv, message);
+            sticker_list(stickers, argc, argv, message);
         }
         else if (strcmp(argv[1], "add") == 0) {
             if (argc < 3) return 0;

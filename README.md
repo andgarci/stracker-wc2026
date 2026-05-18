@@ -4,6 +4,8 @@
 This tracker does not aim to be the most practical, but rather an open-source experiment focused on customizability and full CLI-based control over your sticker collection.
 
 ---
+![img alt](https://i.imgur.com/AfDzyCt.png)
+---
 
 ## Requirements
 
@@ -39,6 +41,8 @@ make
 ./stracker list d mex arg --oneline
 ./stracker list d
 ```
+![img alt](https://i.imgur.com/fywN2Di.png)
+
 ### Album view (interactive)
 ```bash
 ./stracker album [TEAM_CODE e.g. MEX]
@@ -50,3 +54,5 @@ make
 ```bash
 ./stracker remove [CODE e.g. MEX01]
 ```
+
+![img alt](https://i.imgur.com/z2wAHnE.png)

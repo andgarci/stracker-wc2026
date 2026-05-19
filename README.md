@@ -18,7 +18,7 @@ This tracker does not aim to be the most practical, but rather an open-source ex
 
 ## Build
 
-### Using clang (recommended)
+### Using clang
 
 ```bash
 clang -o stracker main.c sticker.c storage.c

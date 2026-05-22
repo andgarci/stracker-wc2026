@@ -34,10 +34,17 @@ make
 ./stracker [command]
 ```
 
+## Help
+To see available commands and usage, run:
+```bash
+./stracker help
+```
+If you run `./stracker` with no arguments, help will be shown by default.
+
 ## Usage
 ### List stickers
 ```bash
-./stracker list [missing|have|duplicate] (optional)[TEAM e.g. "mex" "arg" ...] (optional)[--oneline]
+./stracker list [missing|have|duplicate|m|h|d] (optional)[TEAM e.g. "mex" "arg" ...] (optional)[--oneline]
 ./stracker list d mex arg --oneline
 ./stracker list d
 ```
@@ -47,11 +54,10 @@ make
 ```bash
 ./stracker album [TEAM_CODE e.g. MEX]
 ```
-### Manually Add / Remove
+
+### Add / Remove stickers
 ```bash
 ./stracker add [CODE e.g. MEX01]
-```
-```bash
 ./stracker remove [CODE e.g. MEX01]
 ```
 

@@ -68,6 +68,7 @@ int main(int argc, char *argv[]) {
         stickers = load_db("storage.dat", &count);
     }
     if (argc < 2 || strcmp(argv[1], "help") == 0) {
+        printf("\nStracker WC2026 - Sticker Album CLI\n");
         printf("Usage: stracker <command> [args]\n\n");
         printf("Commands:\n");
         printf("  list <missing|have|duplicate>  [TEAM...] [--oneline]\n");
@@ -77,11 +78,11 @@ int main(int argc, char *argv[]) {
         printf("  compare <your_db> <their_db>\n");
         printf("  help\n\n");
         printf("Examples:\n");
-        printf("  stracker list missing\n");
-        printf("  stracker list d mex arg --oneline\n");
-        printf("  stracker add MEX01\n");
-        printf("  stracker album MEX\n");
-        printf("  stracker compare my.dat friend.dat\n");
+        printf("  ./stracker list missing\n");
+        printf("  ./stracker list d mex arg --oneline\n");
+        printf("  ./stracker add MEX01\n");
+        printf("  ./stracker album MEX\n");
+        printf("  ./stracker compare my.dat friend.dat\n");
         return 0;
     }
     else {
@@ -89,6 +90,7 @@ int main(int argc, char *argv[]) {
             if (argc < 3) {
                 fprintf(stderr, "error: missing status argument\n");
                 fprintf(stderr, "usage: stracker list <missing|have|duplicate> [TEAM...] [--oneline]\n");
+                printf("Example: ./stracker list h\n");
                 return 1;
             }
             sticker_list(stickers, argc, argv, message);
@@ -115,6 +117,7 @@ int main(int argc, char *argv[]) {
             if (argc < 3) {
                 fprintf(stderr, "error: missing team code\n");
                 fprintf(stderr, "usage: stracker album <TEAM>\n");
+                fprintf(stderr, "Example: ./stracker album MEX\n");
                 return 1;
             }
             album_interactive(stickers, count, argv[2], message);

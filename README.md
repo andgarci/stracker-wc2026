@@ -44,7 +44,7 @@ If you run `./stracker` with no arguments, help will be shown by default.
 ## Usage
 ### List stickers
 ```bash
-./stracker list [missing|have|duplicate|m|h|d] [TEAM_CODE ...] [--oneline]
+./stracker list [missing|have|duplicate|m|h|d] (optional)[TEAM e.g. "mex" "arg" ...] (optional)[--oneline]
 ./stracker list d mex arg --oneline
 ./stracker list d
 ```
@@ -62,3 +62,12 @@ If you run `./stracker` with no arguments, help will be shown by default.
 ```
 
 ![img alt](https://i.imgur.com/z2wAHnE.png)
+
+### Compare collections with a friend
+To find out which stickers you can trade with someone, share your `storage.dat` files and run:
+```bash
+./stracker compare storage.dat friend_storage.dat
+```
+This will show two lists:
+- **They can give you** — stickers you're missing that they already have
+- **You can give them** — your duplicates that they're still missing

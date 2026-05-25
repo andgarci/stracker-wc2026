@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "sticker.h"
+#include <unistd.h>
 
 const char *status_names[] = {"MISSING", "HAVE", "DUPLICATE"};
 static char current_team[4] = "NAN";
@@ -31,6 +32,7 @@ Sticker *sticker_find(Sticker stickers[], char code[], char message[]) {
             return &stickers[i];
         }
     }
+
     printf("error: sticker with code %s does not exist\n", code);
     sprintf(message, "error: sticker with code %s does not exist\n", code);
     return NULL;
@@ -151,6 +153,47 @@ void sticker_list(Sticker stickers[], int argc, char *argv[], char message[]) {
 
 }
 
+int album_page_complete(Sticker stickers[], char team_code[],
+                        int *layout, int rows, int cols) {
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            int number = layout[r * cols + c];
+            if (number == -1) continue;
+            char full_code[16];
+            sprintf(full_code, "%s%02d", team_code, number);
+            // find without printing errors
+            for (int i = 0; i < MAX_STICKERS; i++) {
+                if (strcmp(stickers[i].code, full_code) == 0) {
+                    if (stickers[i].quantity == 0) return 0;
+                    break;
+                }
+            }
+        }
+    }
+    return 1;
+}
+
+void animate_complete(char team_code[]) {
+    // flash the completion banner 3 times
+    for (int i = 0; i < 3; i++) {
+        // bold yellow
+        printf("\033[1;33m");
+        printf("  ★ ★ ★  %s PAGE COMPLETE!  ★ ★ ★\n", team_code);
+        printf("\033[0m");
+        fflush(stdout);
+        usleep(300000);  // 300ms on
+
+        // erase the line
+        printf("\033[1A\033[2K");
+        fflush(stdout);
+        usleep(200000);  // 200ms off
+    }
+
+    // final persistent message
+    printf("\033[1;32m  ★ ★ ★  %s PAGE COMPLETE!  ★ ★ ★\033[0m\n\n", team_code);
+    fflush(stdout);
+}
+
 void album_page(Sticker stickers[], char team_code[], char message[]) {
 
     printf("\n===================== %s =====================\n\n", team_code);
@@ -209,6 +252,11 @@ void album_page(Sticker stickers[], char team_code[], char message[]) {
     }
 
     printf("\n");
+
+    if (album_page_complete(stickers, team_code, layout, rows, cols)) {
+            animate_complete(team_code);
+    }
+
 }
 
 

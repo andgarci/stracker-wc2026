@@ -25,6 +25,13 @@ void sticker_print(Sticker *sticker, char message[], int oneline) {
 }
 
 Sticker *sticker_find(Sticker stickers[], char code[], char message[]) {
+    char normalized[8];
+    int i = 0;
+    while (code[i] && isalpha((unsigned char)code[i])) i++;
+    if (strlen(code + i) == 1) {
+        snprintf(normalized, sizeof(normalized), "%.*s0%s", i, code, code + i);
+        code = normalized;
+    }
     for (int i = 0; i < MAX_STICKERS ; i++) {
         //printf("sticker code: %s\n code: %s\n", stickers[i].code, code);
         if (strcmp(stickers[i].code, code) == 0) {
@@ -143,9 +150,41 @@ void sticker_list(Sticker stickers[], int argc, char *argv[], char message[]) {
             int scope = (team_count > 0) ? found : MAX_STICKERS;
             printf("\n\nYou have %d / %d stickers\n", total_have, scope);
             printf("Album %.1f%% complete\n\n", ((float)total_have / MAX_STICKERS) * 100.0f);
+
+            if (status == MISSING && team_count == 0) {
+                char worst_team[4] = "";
+                char cur[4] = "";
+                int cur_missing = 0, max_missing = 0;
+                for (int i = 0; i < MAX_STICKERS; i++) {
+                    if (strcmp(stickers[i].team_code, cur) != 0) {
+                        if (cur_missing > max_missing) {
+                            max_missing = cur_missing;
+                            strncpy(worst_team, cur, 4);
+                        }
+                        strncpy(cur, stickers[i].team_code, 4);
+                        cur_missing = 0;
+                    }
+                    if (stickers[i].status == MISSING) cur_missing++;
+                }
+                if (cur_missing > max_missing) strncpy(worst_team, cur, 4);
+                printf("Most missing team: %s\n", worst_team);
+            }
         }
         else {
+            int total_extra = 0;
+            for (int i = 0; i < MAX_STICKERS; i++)
+                if (stickers[i].status == DUPLICATE)
+                    total_extra += stickers[i].quantity - 1;
             printf("\n\nYou have %d duplicate stickers\n", found);
+            printf("Total tradeable: %d\n", total_extra);
+            Sticker *most = NULL;
+            for (int i = 0; i < MAX_STICKERS; i++) {
+                if (stickers[i].status == DUPLICATE)
+                    if (!most || stickers[i].quantity > most->quantity)
+                        most = &stickers[i];
+            }
+            if (most)
+                printf("Most duplicated: %s - %s (x%d)\n", most->code, most->name, most->quantity - 1);
         }
     }
 

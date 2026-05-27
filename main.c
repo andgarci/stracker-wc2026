@@ -158,6 +158,21 @@ int main(int argc, char *argv[]) {
             free(a);
             free(b);
         }
+        else if (strcmp(argv[1], "trade") == 0) {
+            if (argc < 4) {
+                fprintf(stderr, "error: missing file arguments\n");
+                fprintf(stderr, "usage: stracker trade <sticker_give> <sticker_receive>\n");
+                return 1;
+            }
+            int a = sticker_remove(stickers, argv[2], message);
+            if (a != 0) {
+                fprintf(stderr, "error: missing sticker %s\n", argv[2]);
+                return 1;
+            }
+            sticker_add(stickers, argv[3], message);
+            printf("\nSuccessful trade\n%s ------> %s\n", argv[2], argv[3]);
+            save_db("storage.dat", stickers, count);
+        }
         else {
             fprintf(stderr, "error: unknown command '%s'\n", argv[1]);
             fprintf(stderr, "run 'stracker help' for usage\n");

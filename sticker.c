@@ -78,7 +78,7 @@ void sticker_add(Sticker stickers[], char code[], char message[]) {
     }
 }
 
-void sticker_remove(Sticker stickers[], char code[], char message[]) {
+int sticker_remove(Sticker stickers[], char code[], char message[]) {
     Sticker *sticker = sticker_find(stickers, code, message);
     if (sticker != NULL) {
         if (sticker->quantity > 0) {
@@ -88,7 +88,12 @@ void sticker_remove(Sticker stickers[], char code[], char message[]) {
             sprintf(message, "Successfully removed sticker!\n\n");
             sticker_print(sticker, message, 0);
         }
+        else {
+            return 1;
+        }
+        return 0;
     }
+    return 1;
 }
 
 void sticker_list(Sticker stickers[], int argc, char *argv[], char message[]) {

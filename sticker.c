@@ -45,8 +45,13 @@ void sticker_print(Sticker *sticker, char message[], int oneline) {
             sprintf(current_team, "%s", sticker->team_code);
             strncpy(current_team, sticker->team_code, 3);
         }
-        printf("%s, ", sticker->code + 3);
-        sprintf(message + strlen(message), "%s, ", sticker->code + 3);
+        if (sticker->status == DUPLICATE && sticker->quantity > 2) {
+            printf("%s (x%d), ", sticker->code + 3, sticker->quantity - 1);
+            sprintf(message + strlen(message), "%s (x%d), ", sticker->code + 3, sticker->quantity - 1);
+        } else {
+            printf("%s, ", sticker->code + 3);
+            sprintf(message + strlen(message), "%s, ", sticker->code + 3);
+        }
     }
     else {
         printf("Sticker %s: \n\t Name: %s\n\t Team: %s\n\t Status: %s\n\t Quantity: %d\n\n", 
